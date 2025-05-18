@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Simulator Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="pageWrapper">
+        <div class="game-buttons">
+            <button class="game-button" id="addMemberButton">Add Member</button>
+            <button class="game-button" id="resetTeamButton" style="display: none;">Reset Team</button>
+            <button class="game-button" id="analyseTeamButton" style="display: none;">Analyse Team</button>
+        </div>
+        <div class="tabs-container">
+            <div class="tabs" id="tabs">
+                <!-- Tabs will be dynamically added here -->
+            </div>
+        </div>
+        <div id="helpPanel" style="padding: 20px; background-color: #f9f9f9; border: 1px solid #ccc; margin: 20px; display: block; border-radius: 5px;">
+            <h3>Welcome to Your Team Analysis</h3>
+            <p>To get started, click the "Add Team Member" button to begin the individual team member analysis process.</p>
+            <p>Each phase will guide you through selecting and analyzing your cards.</p>
+        </div>
+        <div class="tab-content" id="tabContent">
+            <!-- Tab content will be dynamically added here -->
+        </div>
+    </div>
+
+    <script id="card-data" type="application/json">
+    {
+      "Spade": {
+        "heading": "Drive",
+        "description": "Determined, driven, assertive",
+        "cards": [
+          { "number": "A", "positive": "I have a vision of where we are heading", "category": "VISION", "negative": "I find it difficult to appreciate the way things are now" },
+          { "number": "2", "positive": "I set challenging goals for myself and others", "category": "AMBITION", "negative": "I find it difficult to relax" },
+          { "number": "3", "positive": "I make the tough decisions when they are needed to make progress", "category": "DECISIONS", "negative": "If I don't make a decision nothing gets done" },
+          { "number": "4", "positive": "I say what I mean and mean what I say", "category": "PLAIN SPEAKING", "negative": "Some people see me as blunt and insensitive" },
+          { "number": "5", "positive": "I stand my ground when it's needed to make progress", "category": "FIRMNESS", "negative": "People will take advantage if I'm not firm" },
+          { "number": "6", "positive": "I see potential in people and work to help them improve", "category": "IMPROVEMENT", "negative": "I sometimes feel the need to fix people" },
+          { "number": "7", "positive": "I initiate action and make things happen", "category": "DRIVE", "negative": "Getting the job done seems more important than how people feel" },
+          { "number": "8", "positive": "I stay resilient in the face of setbacks", "category": "RESILIENCE", "negative": "I find it hard to admit when I'm struggling" },
+          { "number": "9", "positive": "I have confidence that I can do what's needed", "category": "CONFIDENCE", "negative": "I can come across as arrogant" },
+          { "number": "10", "positive": "I challenge people when they fail to meet expectations", "category": "CHALLENGE", "negative": "I can be seen as critical and aggressive" },
+          { "number": "J", "positive": "I hold people to account for what they have agreed to do", "category": "ACCOUNTABILITY", "negative": "People need to be pushed, otherwise they won't deliver" },
+          { "number": "Q", "positive": "I make sure people know what needs doing", "category": "DIRECTION", "negative": "If someone doesn't tell people what to do nothing happens" },
+          { "number": "K", "positive": "I put getting the job done first", "category": "OUTCOME-FOCUS", "negative": "I sometimes ask too much of people" }
+        ]
+      },
+      "Heart": {
+        "heading": "Passion",
+        "description": "Energetic, enthusiastic, persuasive",
+        "cards": [
+          { "number": "A", "positive": "I am responsive to the immediate needs of people around me", "category": "RESPONSIVENESS", "negative": "Responding to people sometimes stops me doing what I planned" },
+          { "number": "2", "positive": "I see the good in people and celebrate the positive", "category": "APPRECIATION", "negative": "Sometimes I can come across as lacking objectivity" },
+          { "number": "3", "positive": "I can usually persuade people to do what I want", "category": "PERSUASION", "negative": "I have to get people to agree with me" },
+          { "number": "4", "positive": "I work hard and get a lot done", "category": "ENERGY", "negative": "If I'm not busy, people won't think much of me" },
+          { "number": "5", "positive": "I like to talk and keep people up to date", "category": "COMMUNICATION", "negative": "Sometimes I talk when I need to get into action" },
+          { "number": "6", "positive": "I expect things to go well and am willing to take risks", "category": "OPTIMISM", "negative": "I can be seen as reckless" },
+          { "number": "7", "positive": "I create a positive and enjoyable atmosphere where people enjoy what they do", "category": "PASSION", "negative": "I can come across as not being serious enough" },
+          { "number": "8", "positive": "I like to try out new things and see possibilities everywhere", "category": "CURIOSITY", "negative": "I get bored if I don't try new things" },
+          { "number": "9", "positive": "I work at a fast pace and can react to new information quickly", "category": "PACE", "negative": "I can seem impulsive to others" },
+          { "number": "10", "positive": "I like to see the big picture of what we are doing", "category": "BIG PICTURE", "negative": "I sometimes lose sight of the details" },
+          { "number": "J", "positive": "I follow my instincts and gut feelings", "category": "INSTINCT", "negative": "I don't like to be constrained by plans" },
+          { "number": "Q", "positive": "I create innovative approaches based on original ideas", "category": "INNOVATION", "negative": "I sometimes irritate people with all my ideas" },
+          { "number": "K", "positive": "I use passion and energy to give people confidence", "category": "ENTHUSIASMS", "negative": "I find it difficult to show my own doubts and concerns" }
+        ]
+      },
+      "Club": {
+        "heading": "Relationships",
+        "description": "Patient, agreeable, diplomatic",
+        "cards": [
+          { "number": "A", "positive": "Once I know what I'm doing I just get on with it", "category": "STEADINESS", "negative": "It is difficult to adapt to change" },
+          { "number": "2", "positive": "I am relaxed and easy to get along with", "category": "EASY-GOING", "negative": "I find it hard to get into action" },
+          { "number": "3", "positive": "I give people time to come to a consensus", "category": "PATIENCE", "negative": "I can be seen as indecisive at times" },
+          { "number": "4", "positive": "I am careful to say the right things in the right way to the right people", "category": "DIPLOMACY", "negative": "If I say what I really think people might react negatively" },
+          { "number": "5", "positive": "I am flexible in meeting people halfway", "category": "AGREEABILITY", "negative": "I mustn't create any conflict" },
+          { "number": "6", "positive": "I show that I respect other people's needs and difficulties", "category": "TOLERANCE", "negative": "I feel uncomfortable expressing my views when they differ from others" },
+          { "number": "7", "positive": "I get along with a wide range of people", "category": "RELATIONSHIPS", "negative": "Relationships are more important than getting the job done" },
+          { "number": "8", "positive": "I am sensitive to how people feel", "category": "SENSITIVITY", "negative": "I can seem over-sensitive to others" },
+          { "number": "9", "positive": "I enjoy being part of a harmonious team", "category": "COLLABORATION", "negative": "It's difficult to work on my own" },
+          { "number": "10", "positive": "I get alongside people and build rapport", "category": "RAPPORT", "negative": "I sometimes feel the need to please others just to be liked" },
+          { "number": "J", "positive": "I am kind-hearted and understanding towards people", "category": "KINDNESS", "negative": "I put up with other people's shortcomings" },
+          { "number": "Q", "positive": "I listen to people even when they are different from me", "category": "LISTENING", "negative": "I sometimes don't know what I want or need" },
+          { "number": "K", "positive": "I put other people first and take care of their needs", "category": "PEOPLE FOCUS", "negative": "I mustn't ask for what I need myself" }
+        ]
+      },
+      "Diamond": {
+        "heading": "Standards",
+        "description": "Reliable, objective, thorough",
+        "cards": [
+          { "number": "A", "positive": "I do what I say I will do", "category": "RELIABILITY", "negative": "Doing what I've said I'll do sometimes stops me responding to the people around me" },
+          { "number": "2", "positive": "I can evaluate any situation or person objectively", "category": "OBJECTIVITY", "negative": "Sometimes I can come across as detached or unfeeling" },
+          { "number": "3", "positive": "I create clarity out of confusing facts and information", "category": "CLARITY", "negative": "Things have to make sense for me to be happy with them" },
+          { "number": "4", "positive": "I work in an organized way to see the job through to completion", "category": "ORGANISATION", "negative": "If I don't get every detail right people won't think much of me" },
+          { "number": "5", "positive": "I make sure I understand things before getting into action", "category": "UNDERSTANDING", "negative": "I sometimes think too much before getting into action" },
+          { "number": "6", "positive": "I make sure nothing goes wrong and can often see the flaws in people's plans and ideas", "category": "CAUTION", "negative": "I can be seen as too risk-averse" },
+          { "number": "7", "positive": "I set high standards for myself and those around me", "category": "STANDARDS", "negative": "I can come across as being too serious" },
+          { "number": "8", "positive": "I like to question things and test ideas before accepting them", "category": "QUESTIONING", "negative": "I get worried if there are details I don't fully understand" },
+          { "number": "9", "positive": "I consistently produce work that is correct and accurate", "category": "ACCURACY", "negative": "I can seem too perfectionist to others" },
+          { "number": "10", "positive": "I pay attention to the details of what we are doing", "category": "DETAIL", "negative": "I sometimes lose sight of the big picture" },
+          { "number": "J", "positive": "I create and follow clear plans and strategies", "category": "PLANNING", "negative": "I can't work without a detailed plan" },
+          { "number": "Q", "positive": "I take a pragmatic view of things based on experience", "category": "COMMON SENSE", "negative": "People sometimes find me lacking in imagination" },
+          { "number": "K", "positive": "I use facts and analysis to give myself confidence", "category": "ANALYSIS", "negative": "If I'm not sure of my facts I'll look stupid" }
+        ]
+      }
+    }
+    </script>
+    <script>
+        let tabCounter = 0;
+        let cardData = {};
+        let phaseOneSelection = {}; // Store the selection for each player
+        let phaseTwoSelection = {}; // Store the selection for each player
+
+        // Replace suit letter with SVG shapes for each suit
+        const suitSVG = {
+            Heart: '<svg width="20" height="20" viewBox="0 0 50 50" fill="red" xmlns="http://www.w3.org/2000/svg"><path d="m20 10c0.97-5 2.911-10 9.702-10 6.792 0 12.128 5 9.703 15-2.426 10-13.584 15-19.405 25-5.821-10-16.979-15-19.405-25-2.4254-10 2.9109-15 9.703-15 6.791 0 8.732 5 9.702 10z"/></svg>',
+            Diamond: '<svg width="20" height="20" viewBox="0 0 50 50" fill="red" xmlns="http://www.w3.org/2000/svg"><path d="m20-3.5527e-15c4 11 9 16 20 20-11 4-16 9-20 20-4-11-9-16-20-20 11-4 16-9 20-20z" /></svg>',
+            Club: '<svg width="20" height="20" viewBox="0 0 50 50" fill="black" xmlns="http://www.w3.org/2000/svg"><path d="m20 0c-4.731 0-8.571 4.032-8.571 9 0.041 3.126 1.654 5.768 3.333 8.281-1.871-1.416-3.951-2.272-6.1906-2.281-4.7314 0-8.5714 4.032-8.5714 9s3.84 9 8.5714 9c3.8326-0.064 6.8986-2.746 9.9106-5-0.539 6.733-1.635 10.514-8.006 12h19.048c-6.371-1.486-7.467-5.267-8.006-12 2.977 2.552 6.1 4.717 9.911 5 4.731 0 8.571-4.032 8.571-9s-3.84-9-8.571-9c-2.297 0-4.281 1.057-6.191 2.281 1.9-2.487 3.151-5.17 3.333-8.281 0-4.968-3.84-9-8.571-9z"/></svg>',
+            Spade: '<svg width="20" height="20" viewBox="0 0 50 50" fill="black" xmlns="http://www.w3.org/2000/svg"><path d="m9.9958 40c7.2112-1.603 7.9872-5.826 8.5312-13.594-1.253 2.075-3.531 3.607-7.25 3.594-6.1124-0.021-10.207-3.576-8.75-11.25 1.4688-7.737 12.469-10.737 17.469-18.75 5 8.0128 16 11.013 17.469 18.75 1.456 7.674-2.469 11.228-8.75 11.25-3.719 0.013-5.997-1.519-7.25-3.594 0.544 7.768 1.319 11.991 8.531 13.594h-20z"/></svg>'
+        };
+        const addSVG = '<svg width="80" height="80" viewBox="0 0 50 50" fill="#4CAF50" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM16.0303 8.96967C16.3232 9.26256 16.3232 9.73744 16.0303 10.0303L11.0303 15.0303C10.7374 15.3232 10.2626 15.3232 9.96967 15.0303L7.96967 13.0303C7.67678 12.7374 7.67678 12.2626 7.96967 11.9697C8.26256 11.6768 8.73744 11.6768 9.03033 11.9697L10.5 13.4393L12.7348 11.2045L14.9697 8.96967C15.2626 8.67678 15.7374 8.67678 16.0303 8.96967Z"/></svg>';
+        const removeSVG = '<svg width="80" height="80" viewBox="0 0 50 50" fill="#4CAF50" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM8.96963 8.96965C9.26252 8.67676 9.73739 8.67676 10.0303 8.96965L12 10.9393L13.9696 8.96967C14.2625 8.67678 14.7374 8.67678 15.0303 8.96967C15.3232 9.26256 15.3232 9.73744 15.0303 10.0303L13.0606 12L15.0303 13.9696C15.3232 14.2625 15.3232 14.7374 15.0303 15.0303C14.7374 15.3232 14.2625 15.3232 13.9696 15.0303L12 13.0607L10.0303 15.0303C9.73742 15.3232 9.26254 15.3232 8.96965 15.0303C8.67676 14.7374 8.67676 14.2625 8.96965 13.9697L10.9393 12L8.96963 10.0303C8.67673 9.73742 8.67673 9.26254 8.96963 8.96965Z"/></svg>';
+        const revealSVG = '<svg width="80" height="80" viewBox="0 0 50 50" fill="#4CAF50" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M2 12C2 13.6394 2.42496 14.1915 3.27489 15.2957C4.97196 17.5004 7.81811 20 12 20C16.1819 20 19.028 17.5004 20.7251 15.2957C21.575 14.1915 22 13.6394 22 12C22 10.3606 21.575 9.80853 20.7251 8.70433C19.028 6.49956 16.1819 4 12 4C7.81811 4 4.97196 6.49956 3.27489 8.70433C2.42496 9.80853 2 10.3606 2 12ZM12 8.25C9.92893 8.25 8.25 9.92893 8.25 12C8.25 14.0711 9.92893 15.75 12 15.75C14.0711 15.75 15.75 14.0711 15.75 12C15.75 9.92893 14.0711 8.25 12 8.25Z"/></svg>';
+
+        // Load card data from the embedded JSON script
+        function loadCardData() {
+            const dataScript = document.getElementById('card-data');
+            cardData = JSON.parse(dataScript.textContent);
+            console.log('Card data loaded:', cardData);
+        }
+
+        function makeTabEditable(tab) {
+            const span = document.createElement('span');
+            span.contentEditable = true;
+            span.innerText = tab.innerText.replace('×', '').trim();
+            span.style.outline = 'none';
+
+            span.addEventListener('focus', () => {
+                const range = document.createRange();
+                range.selectNodeContents(span);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+            });
+
+            span.addEventListener('blur', () => {
+                tab.dataset.tabName = span.innerText;
+            });
+
+            tab.innerHTML = '';
+            tab.appendChild(span);
+            const closeButton = document.createElement('span');
+            closeButton.className = 'close';
+            closeButton.innerHTML = '&times;';
+            tab.appendChild(closeButton);
+        }
+
+        function startGame(playerId) {
+            const playerContent = document.getElementById(playerId);
+            playerContent.innerHTML = '<h3>Start Profile Analysis</h3>';
+            const instruction = document.createElement('p');
+            instruction.textContent = 'Select a single word that best aligns with your work personaility:';
+            playerContent.appendChild(instruction);
+
+            // Extract words from the top-level object descriptions
+            const phase1Words = Object.keys(cardData).map(suit => {
+                return cardData[suit].description.split(', ');
+            }).flat();
+
+            // Capitalize all words
+            const capitalizedWords = phase1Words.map(word => word.toUpperCase());
+
+            // Create UI for phase 1 with words in a circle
+            const phase1Container = document.createElement('div');
+            phase1Container.id = `${playerId}-phase1`;
+            phase1Container.style.display = 'column';
+            phase1Container.style.flexWrap = 'wrap';
+            phase1Container.style.gap = '10px';
+            phase1Container.style.padding = '0px 0px 40px 0px';
+
+            capitalizedWords.forEach((word, index) => {
+                const wordButton = document.createElement('button');
+                wordButton.textContent = word;
+                wordButton.style.margin = '10px';
+                wordButton.style.padding = '10px';
+                wordButton.style.border = '1px solid #000';
+                wordButton.style.borderRadius = '5px';
+                wordButton.style.boxShadow = '2px 2px 5px rgba(0, 0, 0, 0.3)';
+                wordButton.style.textTransform = 'uppercase';
+                wordButton.style.cursor = 'pointer';
+                wordButton.addEventListener('click', () => {
+                    phaseOneSelection[playerId] = word; // Save the selection for later
+                    phase1Container.remove(); // Remove phase 1 UI
+                    renderPhaseTwo(playerId); // Move to phase 2
+                });
+                phase1Container.appendChild(wordButton);
+            });
+
+            playerContent.appendChild(phase1Container);
+        }
+
+        function renderCard(card, suit, isStatic = false) {
+            const cardElement = document.createElement('div');
+            cardElement.className = 'card';
+            cardElement.classList.add("fade-in", "show");
+            cardElement.style.display = 'flex';
+            cardElement.style.flexDirection = 'column';
+            cardElement.style.width = '140px';
+            cardElement.style.height = '200px';
+            cardElement.style.border = '1px solid #000';
+            cardElement.style.borderRadius = '10px';
+            cardElement.style.boxShadow = '2px 2px 5px rgba(0, 0, 0, 0.3)';
+            cardElement.style.margin = '0';
+            cardElement.style.padding = '10px';
+            cardElement.style.position = isStatic ? 'static' : 'absolute';
+            cardElement.style.backgroundColor = '#fff';
+            cardElement.style.cursor = 'pointer';
+            cardElement.dataset.info = suit;
+
+            // Set text color based on suit
+            const textColor = (suit === 'Diamond' || suit === 'Heart') ? 'red' : 'black';
+            cardElement.style.color = textColor;
+
+            // Card number (top-left corner)
+            const numberTopElement = document.createElement('div');
+            numberTopElement.textContent = card.number;
+            numberTopElement.style.position = 'absolute';
+            numberTopElement.style.top = '8px';
+            numberTopElement.style.left = '8px';
+            numberTopElement.style.fontWeight = 'bold';
+            cardElement.appendChild(numberTopElement);
+
+            // Top-right corner suit symbol
+            const suitTopElement = document.createElement('div');
+            suitTopElement.innerHTML = suitSVG[suit];
+            suitTopElement.style.position = 'absolute';
+            suitTopElement.style.top = '8px';
+            suitTopElement.style.right = '4px';
+            cardElement.appendChild(suitTopElement);
+
+            // Card number (bottom-right corner)
+            const numberBottomElement = document.createElement('div');
+            numberBottomElement.textContent = card.number;
+            numberBottomElement.style.position = 'absolute';
+            numberBottomElement.style.bottom = '8px';
+            numberBottomElement.style.right = '8px';
+            numberBottomElement.style.fontWeight = 'bold';
+            cardElement.appendChild(numberBottomElement);
+
+            // Suit letter (bottom-left corner)
+            const suitBottomElement = document.createElement('div');
+            suitBottomElement.innerHTML = suitSVG[suit]; // Use SVG for suit symbol
+            suitBottomElement.style.position = 'absolute';
+            suitBottomElement.style.bottom = '2px';
+            suitBottomElement.style.left  = '8px ' ;  
+            cardElement.appendChild(suitBottomElement);
+
+            // Ensure elements are appended to the card, not the document body
+            cardElement.style.position = 'relative';
+
+            // Positive text (top half)
+            const positiveElement = document.createElement('div');
+            positiveElement.style.alignSelf = 'flex-start';
+            positiveElement.style.display = 'flex';
+            positiveElement.style.alignItems = 'center';
+            positiveElement.textContent = card.positive;
+            positiveElement.style.marginTop = '15px';
+            positiveElement.style.height = '70px';
+            positiveElement.style.fontSize = '14px';
+            positiveElement.style.textAlign = 'center';
+            cardElement.appendChild(positiveElement);
+
+            // Category (middle)
+            const categoryElement = document.createElement('div');
+            categoryElement.textContent = card.category;
+            categoryElement.style.margin = 'auto 0';
+            categoryElement.style.fontSize = '14px';
+            categoryElement.style.fontWeight = 'bold';
+            categoryElement.style.textAlign = 'center';
+            categoryElement.style.verticalAlign = 'center';
+            categoryElement.style.padding = '4px';
+            categoryElement.style.borderTop = '1px solid';
+            categoryElement.style.borderBottom = '1px solid';
+            cardElement.appendChild(categoryElement);
+
+            // Negative text (bottom half)
+            const negativeElement = document.createElement('div');
+            negativeElement.id = 'negativeText';
+            negativeElement.style.alignSelf = 'flex-end';
+            negativeElement.style.display = 'flex';
+            negativeElement.style.alignItems = 'center';
+            negativeElement.textContent = card.negative;
+            negativeElement.style.marginBottom = '10px';
+            negativeElement.style.height = '70px';
+            negativeElement.style.fontSize = '14px';
+            negativeElement.style.textAlign = 'center';
+            negativeElement.style.visibility = 'hidden'; // Initially hidden
+            cardElement.appendChild(negativeElement);
+
+            // Add hover icon
+            const hoverIcon = document.createElement('div');
+            hoverIcon.classList.add('hover-icon');
+            hoverIcon.innerHTML = '';
+            hoverIcon.style.position = 'absolute';
+            hoverIcon.style.top = '70%';
+            hoverIcon.style.left = '45%';
+            hoverIcon.style.justifyContent = 'center';
+            hoverIcon.style.alignItems = 'center';
+            cardElement.appendChild(hoverIcon);
+
+            return cardElement;
+        }
+
+        function renderPhaseTwo(playerId) {
+            const playerContent = document.getElementById(playerId);
+            playerContent.innerHTML = '<h3>Select Cards</h3>';
+            const instruction = document.createElement('p');
+            instruction.textContent = 'Select a card, from any of the cards presented, that resonates with your personality, until there are no cards left:';
+            playerContent.appendChild(instruction);
+
+
+            const suits = Object.keys(cardData);
+            const stacksContainer = document.createElement('div');
+            stacksContainer.style.display = 'flex';
+            stacksContainer.style.flexWrap = 'wrap';
+            stacksContainer.style.gap = '10px';
+
+            const handContainer = document.createElement('div');
+            handContainer.id = `${playerId}-hand`;
+            handContainer.style.marginTop = '20px';
+            handContainer.style.display = 'flex';
+            handContainer.style.flexWrap = 'wrap';
+            handContainer.style.gap = '10px';
+
+            const piles = {};
+
+            suits.forEach(suit => {
+                const stack = document.createElement('div');
+                stack.className = 'stack';
+                stack.style.position = 'relative';
+
+                const cards = [...cardData[suit].cards]; // Clone the cards array
+                piles[suit] = cards;
+
+                const updateStack = () => {
+                    stack.innerHTML = '';
+                    if (cards.length > 0) {
+                        const topCard = cards[cards.length - 1];
+                        const cardElement = renderCard(topCard, suit, false);
+                        cardElement.addEventListener('click', () => {
+                            addToHand(playerId, topCard, suit);
+                            cards.pop();
+                            updateAllStacks(piles, suit, playerId); // Remove top card from all piles
+                            checkPhaseTwoCompletion(playerId, piles);
+                        });
+                        cardElement.querySelector(".hover-icon").innerHTML = addSVG;
+                        stack.appendChild(cardElement);
+                    }
+                };
+
+                updateStack();
+                stacksContainer.appendChild(stack);
+            });
+
+            playerContent.appendChild(stacksContainer);
+
+            const handHeader = document.createElement('h3');
+            handHeader.textContent = 'Your Hand';
+            playerContent.appendChild(handHeader);
+
+            playerContent.appendChild(handContainer);
+        }
+
+        function updateAllStacks(piles, selectedSuit, playerId) {
+            Object.keys(piles).forEach(suit => {
+                if (suit !== selectedSuit && piles[suit].length > 0) {
+                    piles[suit].pop();
+                }
+            });
+
+            // Re-render all stacks
+            const stacks = document.querySelectorAll(`#${playerId} .stack`);
+            stacks.forEach((stack, index) => {
+                const suit = Object.keys(piles)[index];
+                stack.innerHTML = '';
+                if (piles[suit].length > 0) {
+                    const topCard = piles[suit][piles[suit].length - 1];
+                    const cardElement = renderCard(topCard, suit, false);
+                    cardElement.addEventListener('click', () => {
+                        addToHand(playerId, topCard, suit);
+                        piles[suit].pop();
+                        updateAllStacks(piles, suit, playerId);
+                        checkPhaseTwoCompletion(playerId, piles);
+                    });
+                    cardElement.querySelector(".hover-icon").innerHTML = addSVG;
+                    stack.appendChild(cardElement);
+                }
+            });
+        }
+
+        function addToHand(playerId, card, suit) {
+            const handContainer = document.getElementById(`${playerId}-hand`);
+            const cardElement = renderCard(card, suit, true); // Render card as static for the hand
+            handContainer.appendChild(cardElement);
+        }
+
+        function checkPhaseTwoCompletion(playerId, piles) {
+            const allEmpty = Object.values(piles).every(cards => cards.length === 0);
+            const handContainer = document.getElementById(`${playerId}-hand`);
+            if (allEmpty && handContainer.children.length === 13) {
+                setTimeout(() => {
+                    renderPhaseThree(playerId);
+                }, 0); // Ensure UI updates before transitioning
+            }
+        }
+
+        function renderPhaseThree(playerId) {
+            const playerContent = document.getElementById(playerId);
+
+            // Hide the piles area but keep the selected cards (hand)
+            const handContainer = document.getElementById(`${playerId}-hand`);
+
+            playerContent.innerHTML = '<h3>Reduce Your Hand</h3>';
+
+            const instruction = document.createElement('p');
+            instruction.textContent = 'Select any 8 cards to discard, so that you are left with 5 cards that represent your strong profile:';
+            playerContent.appendChild(instruction);
+
+            playerContent.appendChild(handContainer);
+
+            let discardCount = 0;
+
+            // Add discard functionality to each card in the hand
+            Array.from(handContainer.children).forEach(cardElement => {
+                cardElement.style.cursor = 'pointer';
+                cardElement.addEventListener('click', () => {
+                    if (discardCount < 8) {
+                        cardElement.remove();
+                        discardCount++;
+
+                        if (discardCount === 8) {
+                            finalizePhaseThree(playerId);
+                        }
+                    }
+                });
+                cardElement.querySelector(".hover-icon").innerHTML = removeSVG;
+            });
+        }
+
+        function finalizePhaseThree(playerId) {
+            const playerContent = document.getElementById(playerId);
+            const handContainer = document.getElementById(`${playerId}-hand`);
+
+            playerContent.innerHTML = '<h3>Your Final Hand</h3>';
+
+            const instruction = document.createElement('p');
+            instruction.textContent = 'Click on each card to reveal the opposite effect and discuss:';
+            playerContent.appendChild(instruction);
+
+            playerContent.appendChild(handContainer);
+
+            // Add functionality to reveal negative text on click
+            Array.from(handContainer.children).forEach(cardElement => {
+                const negativeText = cardElement.querySelector('#negativeText'); // Select the negative text element
+                if (negativeText) {
+                    cardElement.addEventListener('click', () => {
+                        negativeText.style.visibility = 'visible'; // Set visibility to visible on click
+                        cardElement.querySelector(".hover-icon").innerHTML = '';
+                    });
+                    cardElement.querySelector(".hover-icon").innerHTML = revealSVG;
+                }
+            });
+
+            const analysis = document.createElement('h3');
+            analysis.textContent = 'Your Card Analysis';
+            playerContent.appendChild(analysis);
+
+            // Generate bar graph for suit analysis
+            const suitCounts = { Spade: 0, Heart: 0, Club: 0, Diamond: 0 };
+            const finalCounts = { Spade: 0, Heart: 0, Club: 0, Diamond: 0 };
+
+            // Count cards selected in Phase 2 and Phase 3
+            Array.from(handContainer.children).forEach(cardElement => {
+                const suit = cardElement.dataset.info; // Extract suit letter
+                const fullSuit = Object.keys(suitCounts).find(key => key === suit);
+
+                if (fullSuit) {
+                    finalCounts[fullSuit]++;
+                }
+            });
+
+            // Create bar graph container
+            const graphContainer = document.createElement('div');
+            graphContainer.style.display = 'flex';
+            graphContainer.style.flexWrap = 'wrap';
+            graphContainer.style.justifyContent = 'flex-start'; // Left align the graph
+            graphContainer.style.margin = '10px';
+            // graphContainer.style.height = '100px';
+            // graphContainer.style.width = '600px'; // Fixed width for the graph
+            graphContainer.style.marginLeft = '20px'; // Add some left margin for spacing
+
+            Object.keys(suitCounts).forEach(suit => {
+                const barContainer = document.createElement('div');
+                barContainer.style.textAlign = 'left';
+                barContainer.style.margin = '20px'; // Add spacing between bars
+
+                const bar = document.createElement('div');
+                barContainer.style.position = 'relative';
+
+                const barBg = document.createElement('div');
+                barBg.style.width = '50px';
+                barBg.style.height = '100px';
+                barBg.style.backgroundColor = '#c6c6c6';
+                barBg.style.margin = '0 auto';
+                barBg.style.bottom = '0';
+                barBg.style.left = '0';
+                barBg.style.position = 'absolute';
+
+                // const barPhase2 = document.createElement('div');
+                // barPhase2.style.width = '50px';
+                // barPhase2.style.height = '90px';
+                // barPhase2.style.backgroundColor = 'red';
+                // barPhase2.style.margin = '0 auto';
+                // barPhase2.style.bottom = '0';
+                // barPhase2.style.left = '0';
+                // barPhase2.style.position = 'absolute';
+
+                const barPhase3 = document.createElement('div');
+                barPhase3.style.width = '50px';
+                barPhase3.style.height = `${finalCounts[suit] * 20}px`;
+                barPhase3.style.backgroundColor = '#4CAF50';
+                barPhase3.style.margin = '0 auto';
+                barPhase3.style.bottom = '0';
+                barPhase3.style.left = '0';
+                barPhase3.style.position = 'absolute';
+
+                const labelCount = document.createElement('div');
+                labelCount.textContent = finalCounts[suit];
+                labelCount.style.fontWeight = 'bold';
+                labelCount.style.bottom = '10px';
+                labelCount.style.left = '20px';
+                labelCount.style.color = 'white';
+                labelCount.style.position = 'absolute';
+                labelCount.style.textAlign = 'center';
+
+                bar.appendChild(barBg);
+                //bar.appendChild(barPhase2);
+                bar.appendChild(barPhase3);
+                bar.appendChild(labelCount);
+
+                // const fadedBar = document.createElement('div');
+                // fadedBar.style.width = '50px';
+                // fadedBar.style.height = `${suitCounts[suit] * 20}px`;
+                // fadedBar.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
+                // fadedBar.style.margin = '0 auto';
+                // fadedBar.style.position = 'absolute';
+                // fadedBar.style.zIndex = '-1';
+
+                const heading = cardData[suit].heading;
+                const label = document.createElement('div');
+                label.textContent = heading;
+                label.style.paddingLeft = '60px';
+                label.style.fontWeight = 'bold';
+
+                // Add description words stacked vertically with the selected word highlighted
+                const descriptionContainer = document.createElement('div');
+                descriptionContainer.style.display = 'flex';
+                descriptionContainer.style.flexDirection = 'column';
+                descriptionContainer.style.alignItems = 'left';
+                descriptionContainer.style.paddingLeft = '60px';
+                const descriptionWords = cardData[suit].description.toUpperCase().split(', '); // Capitalize descriptions
+                descriptionWords.forEach(word => {
+                    const wordElement = document.createElement('div');
+                    wordElement.textContent = word;
+                    wordElement.style.marginTop = '10px';
+                    if (phaseOneSelection[playerId] === word.toUpperCase()) {
+                        wordElement.style.fontWeight = 'bold';
+                        wordElement.style.color = '#4CAF50'; // Highlight selected word
+                    }
+                    descriptionContainer.appendChild(wordElement);
+                });
+
+                barContainer.appendChild(label);
+                barContainer.appendChild(bar);
+                barContainer.appendChild(descriptionContainer);
+                graphContainer.appendChild(barContainer);
+            });
+
+            playerContent.appendChild(graphContainer);
+        }
+
+        function createTab(playerName) {
+            const tabs = document.getElementById('tabs');
+            const tabContent = document.getElementById('tabContent');
+
+            // Create a new tab
+            const tab = document.createElement('div');
+            tab.className = 'tab';
+            tab.dataset.tabId = `player-${tabCounter}`;
+            tab.dataset.tabName = playerName;
+            tab.innerHTML = `${playerName} <span class="close">&times;</span>`;
+
+            makeTabEditable(tab);
+
+            // Add click event to switch tabs
+            tab.addEventListener('click', (e) => {
+                if (e.target.classList.contains('close')) {
+                    removeTab(tab.dataset.tabId);
+                } else {
+                    switchTab(tab.dataset.tabId);
+                }
+            });
+
+            tabs.appendChild(tab);
+
+            // Create corresponding tab content
+            const content = document.createElement('div');
+            content.className = 'content';
+            content.id = `player-${tabCounter}`;
+            content.style.display = 'none';
+
+            tabContent.appendChild(content);
+
+            // Automatically switch to the new tab and start the game
+            switchTab(tab.dataset.tabId);
+            startGame(`player-${tabCounter}`);
+
+            tabCounter++;
+        }
+
+        function switchTab(tabId) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.content');
+
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.tabId === tabId) {
+                    tab.classList.add('active');
+                }
+            });
+
+            contents.forEach(content => {
+                content.style.display = 'none';
+                if (content.id === tabId) {
+                    content.style.display = 'block';
+                }
+            });
+        }
+
+        function removeTab(tabId) {
+            const tab = document.querySelector(`.tab[data-tab-id="${tabId}"]`);
+            const content = document.getElementById(tabId);
+
+            if (tab && content) {
+                tab.remove();
+                content.remove();
+
+                // Switch to the first tab if available
+                const firstTab = document.querySelector('.tab');
+                if (firstTab) {
+                    switchTab(firstTab.dataset.tabId);
+                } else {
+                    const helpPanel = document.getElementById('helpPanel');
+                    if (helpPanel) {
+                        helpPanel.style.display = 'block'; // Show the help panel if no players remain
+                    }
+                }
+            }
+        }
+
+        // Load card data on page load
+        loadCardData();
+
+        document.getElementById('addMemberButton').addEventListener('click', () => {
+            const helpPanel = document.getElementById('helpPanel');
+            if (helpPanel) {
+                helpPanel.style.display = 'none'; // Hide the help panel when a player is added
+            }
+            createTab(`Member ${tabCounter + 1}`);
+
+            // Show the Reset Team button when a player is added
+            const resetButton = document.getElementById('resetTeamButton');
+            if (resetButton) {
+                resetButton.style.display = 'inline-block';
+            }
+        });
+
+        document.getElementById('resetTeamButton').addEventListener('click', () => {
+            const tabs = document.getElementById('tabs');
+            const tabContent = document.getElementById('tabContent');
+
+            // Remove all player tabs and content
+            tabs.innerHTML = '';
+            tabContent.innerHTML = '';
+
+            // Show the help panel
+            const helpPanel = document.getElementById('helpPanel');
+            if (helpPanel) {
+                helpPanel.style.display = 'block';
+            }
+
+            // Hide the Reset Team button
+            const resetButton = document.getElementById('resetTeamButton');
+            if (resetButton) {
+                resetButton.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

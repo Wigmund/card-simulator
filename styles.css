@@ -1,0 +1,125 @@
+@media (min-width: 800px) and (max-resolution: 1dppx) {
+    #pageWrapper {
+        transform: scale(1.25);
+        max-height: calc(100vh / 1.25);
+        max-width: calc(100vw / 1.25);
+    }
+}
+@media (min-width: 1200px) and (max-resolution: 1dppx) {
+    #pageWrapper {
+        transform: scale(1.5);
+        max-height: calc(100vh / 1.5);
+        max-width: calc(100vw / 1.5);
+    }
+}
+@media (min-width: 1600px) and (max-resolution: 1dppx) {
+    #pageWrapper {
+        transform: scale(1.75);
+        max-height: calc(100vh / 1.75);
+        max-width: calc(100vw / 1.75);
+    }
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+#pageWrapper {
+    transform-origin: top left;
+}
+.content {
+    overflow-y: auto;
+    height: 88vh;
+}
+.tabs-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+}
+.tabs {
+    display: flex;
+    padding: 0px 10px 0px 10px;
+    border-bottom: 0px solid #ccc;
+}
+.tab {
+    padding: 10px 20px;
+    margin-right: 5px;
+    font-weight: bold;
+    background-color: #f1f1f1;
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-radius: 5px 5px 0 0;
+    cursor: pointer;
+}
+.tab.active {
+    background-color: #4CAF5022;
+    border-bottom: none;
+}
+.tab .close {
+    margin-left: 10px;
+    color: #4CAF50;
+    cursor: pointer;
+}
+.tab-content {
+    padding: 0px 10px;
+    border: 0px solid #ccc;
+    border-top: none;
+    background-color: #4CAF5022;
+}
+.add-tab {
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 5px;
+}
+.game-buttons {
+    display: flex;
+    justify-content: left;
+    padding: 10px 5px;
+}
+.game-button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 0 5px;
+}
+.game-button:hover {
+    background-color: #45a049;
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+.fade-in {
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Styles for hover icons */
+.hover-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 24px;
+    height: 24px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card:hover .hover-icon {
+    opacity: 1;
+}
